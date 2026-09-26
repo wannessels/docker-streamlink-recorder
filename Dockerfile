@@ -5,7 +5,7 @@ ENV streamlinkCommit=a309e6e9cf621655779c7283dff51686f5d2a22b
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y gosu python3-pip git ca-certificates ffmpeg
 
-RUN pip3 install --upgrade git+https://github.com/streamlink/streamlink.git@${streamlinkCommit}
+RUN pip3 install --upgrade git+https://github.com/streamlink/streamlink.git@${streamlinkCommit} urllib3==2.6.3
 RUN pip install cloudscraper
 
 RUN  echo 'export PATH="${HOME}/.local/bin:${PATH}"'
