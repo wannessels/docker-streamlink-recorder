@@ -36,6 +36,8 @@ docker run -v /home/:/home/download -e streamLink='twitch.tv/twitch' -e streamQu
 
 `streamOptions` - streamlink flags (--twitch-disable-reruns, separated by ```;```, see [Plugins](https://streamlink.github.io/plugins.html))
 
+`retryInterval` - seconds to wait before checking again after streamlink exits (fallback to 60)
+
 `uid` - USER ID, map to your desired User ID (fallback to 9001)
 
 `gid` - GROUP ID, map to your desired Group ID (fallback to 9001)
