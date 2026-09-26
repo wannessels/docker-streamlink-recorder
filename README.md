@@ -1,45 +1,27 @@
 # docker-streamlink-recorder
 
-Automated Dockerfile to record livestreams with streamlink
-
-## Description
-
-This is a Docker Container to record a livestream. It uses the official [Python Image](https://hub.docker.com/_/python) with the Tag *bullseye*  , installs [streamlink](https://github.com/streamlink/streamlink) and uses the Script [streamlink-recorder.sh](https://raw.githubusercontent.com/lauwarm/docker-streamlink-recorder/main/streamlink-recorder.sh) to periodically check if the stream is live.
+Records a Twitch stream with [streamlink](https://github.com/streamlink/streamlink) whenever it is live. Forked from [lauwarm/docker-streamlink-recorder](https://github.com/lauwarm/docker-streamlink-recorder) and trimmed to Twitch only.
 
 ## Usage
 
-To run the Container:
-
 ```bash
-docker run -v /path/to/vod/folder/:/home/download -e streamLink='' -e streamQuality='' -e streamName='' -e streamOptions='' -e uid='' -e gid='' lauwarm/streamlink-recorder
+docker run --user 1000:1000 -v /path/to/vods:/home/download \
+  -e streamLink='twitch.tv/twitch' -e streamQuality='best' -e streamName='twitch' \
+  -e streamOptions='--twitch-api-header=Authorization=OAuth abcdefg123456;--hls-live-restart' \
+  -e retryInterval='20' \
+  <image>
 ```
 
-Example:
+## Environment
 
-```bash
-docker run -v /home/:/home/download -e streamLink='twitch.tv/twitch' -e streamQuality='best' -e streamName='twitch' -e streamOptions='--twitch-api-header=Authorization=OAuth abcdefg123456;--twitch-disable-reruns' -e uid='1001' -e gid='1001' lauwarm/streamlink-recorder
-```
+`streamLink` - the url of the stream to record.
 
-## Notes
+`streamQuality` - streamlink quality (best, worst, 720p60, ...).
 
-`/home/download` - the place where the vods will be saved. Mount it to a desired place with `-v` option.
+`streamName` - file name prefix.
 
-`/home/script` - the place where the scripts are stored. (entrypoint.sh and streamlink-recorder.sh)
+`streamOptions` - streamlink flags, separated by `;`.
 
-`/home/plugins` - the place where the streamlink plugins are stored.
+`retryInterval` - seconds to wait before checking again after streamlink exits (default 60).
 
-`streamLink` - the url of the stream you want to record.
-
-`streamQuality` - quality options (best, high, medium, low).
-
-`streamName` - name for the stream.
-
-`streamOptions` - streamlink flags (--twitch-disable-reruns, separated by ```;```, see [Plugins](https://streamlink.github.io/plugins.html))
-
-`retryInterval` - seconds to wait before checking again after streamlink exits (fallback to 60)
-
-`uid` - USER ID, map to your desired User ID (fallback to 9001)
-
-`gid` - GROUP ID, map to your desired Group ID (fallback to 9001)
-
-The File will be saved as `streamName-YearMonthDay-HourMinuteSecond.mkv`
+Recordings are saved to `/home/download/<streamName>-<YYYYMMDD-HHMMSS>.mkv`. Run the container as the user that should own them (`--user` / compose `user:`).
